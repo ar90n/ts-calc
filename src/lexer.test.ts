@@ -12,10 +12,10 @@ import {
   rightParenTag,
   delimtierTag,
   functionTag,
-  tokenOf,
 } from './lexer.type';
 
 import {
+  tokenOf,
   TokenizeZeroTransform,
   TokenizeNonZeroDigitTransform,
   TokenizePlusTransform,
