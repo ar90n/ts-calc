@@ -1,4 +1,18 @@
 import { ObjectReadableMock, ObjectWritableMock } from 'stream-mock';
+import {
+  zeroTag,
+  nonZeroDigitTag,
+  plusTag,
+  minusTag,
+  multTag,
+  divTag,
+  dotTag,
+  leftParenTag,
+  rightParenTag,
+  delimtierTag,
+  functionTag,
+  tokenOf,
+} from './lexer.type';
 
 import {
   TokenizeZeroTransform,
@@ -22,7 +36,7 @@ test('tokenize Zero', done => {
   reader.pipe(tokenizeZero).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'zero', value: '0' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(zeroTag, '0'), 'a']);
     done();
   });
 });
@@ -37,15 +51,15 @@ test('tokenize NonZeroDigit', done => {
   writer.on('finish', () => {
     expect(writer.data).toEqual([
       '0',
-      { kind: 'non_zero_digit', value: '1' },
-      { kind: 'non_zero_digit', value: '2' },
-      { kind: 'non_zero_digit', value: '3' },
-      { kind: 'non_zero_digit', value: '4' },
-      { kind: 'non_zero_digit', value: '5' },
-      { kind: 'non_zero_digit', value: '6' },
-      { kind: 'non_zero_digit', value: '7' },
-      { kind: 'non_zero_digit', value: '8' },
-      { kind: 'non_zero_digit', value: '9' },
+      tokenOf(nonZeroDigitTag, '1'),
+      tokenOf(nonZeroDigitTag, '2'),
+      tokenOf(nonZeroDigitTag, '3'),
+      tokenOf(nonZeroDigitTag, '4'),
+      tokenOf(nonZeroDigitTag, '5'),
+      tokenOf(nonZeroDigitTag, '6'),
+      tokenOf(nonZeroDigitTag, '7'),
+      tokenOf(nonZeroDigitTag, '8'),
+      tokenOf(nonZeroDigitTag, '9'),
       'a',
     ]);
     done();
@@ -60,7 +74,7 @@ test('tokenize plus', done => {
   reader.pipe(tokenizePlus).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'plus', value: '+' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(plusTag, '+'), 'a']);
     done();
   });
 });
@@ -73,7 +87,7 @@ test('tokenize minus', done => {
   reader.pipe(tokenizeMinus).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'minus', value: '-' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(minusTag, '-'), 'a']);
     done();
   });
 });
@@ -86,7 +100,7 @@ test('tokenize mult', done => {
   reader.pipe(tokenizeMult).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'mult', value: '*' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(multTag, '*'), 'a']);
     done();
   });
 });
@@ -99,7 +113,7 @@ test('tokenize div', done => {
   reader.pipe(tokenizeDiv).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'div', value: '/' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(divTag, '/'), 'a']);
     done();
   });
 });
@@ -112,7 +126,7 @@ test('tokenize dot', done => {
   reader.pipe(tokenizeDot).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'dot', value: '.' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(dotTag, '.'), 'a']);
     done();
   });
 });
@@ -125,7 +139,7 @@ test('tokenize left paren', done => {
   reader.pipe(tokenizeLeftParen).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'left_paren', value: '(' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(leftParenTag, '('), 'a']);
     done();
   });
 });
@@ -138,7 +152,7 @@ test('tokenize right paren', done => {
   reader.pipe(tokenizeRightParen).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([{ kind: 'right_paren', value: ')' }, 'a']);
+    expect(writer.data).toEqual([tokenOf(rightParenTag, ')'), 'a']);
     done();
   });
 });
@@ -151,11 +165,7 @@ test('tokenize delimiter', done => {
   reader.pipe(tokenizeDelimiter).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([
-      { kind: 'delimiter', value: ' ' },
-      'a',
-      { kind: 'delimiter', value: '\t' },
-    ]);
+    expect(writer.data).toEqual([tokenOf(delimtierTag, ' '), 'a', tokenOf(delimtierTag, '\t')]);
     done();
   });
 });
@@ -172,8 +182,8 @@ test('tokenize function', done => {
     expect(writer.data).toEqual([
       's',
       'i',
-      { kind: 'delimiter', value: ' ' },
-      { kind: 'function', value: 'sin' },
+      tokenOf(delimtierTag, ' '),
+      tokenOf(functionTag, 'sin'),
       'n',
       's',
       'i',
