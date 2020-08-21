@@ -2,24 +2,24 @@ import { Transform, TransformOptions, TransformCallback } from 'stream';
 
 import {
   TOKEN,
-  ParseResult,
-  parseDelimiter,
-  parseZero,
-  parseNonZeroDigit,
-  parsePlus,
-  parseMinus,
-  parseMult,
-  parseDiv,
-  parseDot,
-  parseFunction,
-  parseLeftParen,
-  parseRightParen,
+  TokenizeResult,
+  tokenizeDelimiter,
+  tokenizeZero,
+  tokenizeNonZeroDigit,
+  tokenizePlus,
+  tokenizeMinus,
+  tokenizeMult,
+  tokenizeDiv,
+  tokenizeDot,
+  tokenizeFunction,
+  tokenizeLeftParen,
+  tokenizeRightParen,
 } from './lexer.type';
 
-class ParseTransform extends Transform {
+class TokenizeTransform extends Transform {
   _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {
     if (typeof chunk === 'string') {
-      const res = this._parse(chunk);
+      const res = this._tokenize(chunk);
       if (res.status === 'success') {
         this.push(res.token);
         done();
@@ -30,12 +30,12 @@ class ParseTransform extends Transform {
     this.push(chunk);
     done();
   }
-  _parse(_chunk: string): ParseResult<TOKEN> {
+  _tokenize(_chunk: string): TokenizeResult<TOKEN> {
     return { status: 'failure' };
   }
 }
 
-export class ParseFunctionTransform extends Transform {
+export class TokenizeFunctionTransform extends Transform {
   acc: string;
 
   constructor(opts?: TransformOptions) {
@@ -45,7 +45,7 @@ export class ParseFunctionTransform extends Transform {
 
   _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {
     if (typeof chunk === 'string') {
-      const res = parseFunction(this.acc + chunk);
+      const res = tokenizeFunction(this.acc + chunk);
       if (res.status === 'success') {
         this.push(res.token);
         this.acc = '';
@@ -79,62 +79,62 @@ export class ParseFunctionTransform extends Transform {
   }
 }
 
-export class ParseZeroTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseZero(chunk);
+export class TokenizeZeroTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeZero(chunk);
   }
 }
 
-export class ParseNonZeroDigitTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseNonZeroDigit(chunk);
+export class TokenizeNonZeroDigitTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeNonZeroDigit(chunk);
   }
 }
 
-export class ParsePlusTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parsePlus(chunk);
+export class TokenizePlusTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizePlus(chunk);
   }
 }
 
-export class ParseMinusTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseMinus(chunk);
+export class TokenizeMinusTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeMinus(chunk);
   }
 }
 
-export class ParseMultTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseMult(chunk);
+export class TokenizeMultTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeMult(chunk);
   }
 }
 
-export class ParseDivTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseDiv(chunk);
+export class TokenizeDivTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeDiv(chunk);
   }
 }
 
-export class ParseDotTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseDot(chunk);
+export class TokenizeDotTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeDot(chunk);
   }
 }
 
-export class ParseLeftParenTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseLeftParen(chunk);
+export class TokenizeLeftParenTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeLeftParen(chunk);
   }
 }
 
-export class ParseRightParenTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseRightParen(chunk);
+export class TokenizeRightParenTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeRightParen(chunk);
   }
 }
 
-export class ParseDelimiterTransform extends ParseTransform {
-  _parse(chunk: string): ParseResult<TOKEN> {
-    return parseDelimiter(chunk);
+export class TokenizeDelimiterTransform extends TokenizeTransform {
+  _tokenize(chunk: string): TokenizeResult<TOKEN> {
+    return tokenizeDelimiter(chunk);
   }
 }

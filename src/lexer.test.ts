@@ -1,25 +1,25 @@
 import { ObjectReadableMock, ObjectWritableMock } from 'stream-mock';
 
 import {
-  ParseZeroTransform,
-  ParseNonZeroDigitTransform,
-  ParsePlusTransform,
-  ParseMinusTransform,
-  ParseMultTransform,
-  ParseDivTransform,
-  ParseDotTransform,
-  ParseLeftParenTransform,
-  ParseRightParenTransform,
-  ParseDelimiterTransform,
-  ParseFunctionTransform,
+  TokenizeZeroTransform,
+  TokenizeNonZeroDigitTransform,
+  TokenizePlusTransform,
+  TokenizeMinusTransform,
+  TokenizeMultTransform,
+  TokenizeDivTransform,
+  TokenizeDotTransform,
+  TokenizeLeftParenTransform,
+  TokenizeRightParenTransform,
+  TokenizeDelimiterTransform,
+  TokenizeFunctionTransform,
 } from './lexer';
 
-test('parse Zero', done => {
+test('tokenize Zero', done => {
   const input = ['0', 'a'];
-  const parseZero = new ParseZeroTransform({ objectMode: true });
+  const tokenizeZero = new TokenizeZeroTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseZero).pipe(writer);
+  reader.pipe(tokenizeZero).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'zero', value: '0' }, 'a']);
@@ -27,12 +27,12 @@ test('parse Zero', done => {
   });
 });
 
-test('parse NonZeroDigit', done => {
+test('tokenize NonZeroDigit', done => {
   const input = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a'];
-  const parseNonZeroDigit = new ParseNonZeroDigitTransform({ objectMode: true });
+  const tokenizeNonZeroDigit = new TokenizeNonZeroDigitTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseNonZeroDigit).pipe(writer);
+  reader.pipe(tokenizeNonZeroDigit).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([
@@ -52,12 +52,12 @@ test('parse NonZeroDigit', done => {
   });
 });
 
-test('parse plus', done => {
+test('tokenize plus', done => {
   const input = ['+', 'a'];
-  const parsePlus = new ParsePlusTransform({ objectMode: true });
+  const tokenizePlus = new TokenizePlusTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parsePlus).pipe(writer);
+  reader.pipe(tokenizePlus).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'plus', value: '+' }, 'a']);
@@ -65,12 +65,12 @@ test('parse plus', done => {
   });
 });
 
-test('parse minus', done => {
+test('tokenize minus', done => {
   const input = ['-', 'a'];
-  const parseMinus = new ParseMinusTransform({ objectMode: true });
+  const tokenizeMinus = new TokenizeMinusTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseMinus).pipe(writer);
+  reader.pipe(tokenizeMinus).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'minus', value: '-' }, 'a']);
@@ -78,12 +78,12 @@ test('parse minus', done => {
   });
 });
 
-test('parse mult', done => {
+test('tokenize mult', done => {
   const input = ['*', 'a'];
-  const parseMult = new ParseMultTransform({ objectMode: true });
+  const tokenizeMult = new TokenizeMultTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseMult).pipe(writer);
+  reader.pipe(tokenizeMult).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'mult', value: '*' }, 'a']);
@@ -91,12 +91,12 @@ test('parse mult', done => {
   });
 });
 
-test('parse div', done => {
+test('tokenize div', done => {
   const input = ['/', 'a'];
-  const parseDiv = new ParseDivTransform({ objectMode: true });
+  const tokenizeDiv = new TokenizeDivTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseDiv).pipe(writer);
+  reader.pipe(tokenizeDiv).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'div', value: '/' }, 'a']);
@@ -104,12 +104,12 @@ test('parse div', done => {
   });
 });
 
-test('parse dot', done => {
+test('tokenize dot', done => {
   const input = ['.', 'a'];
-  const parseDot = new ParseDotTransform({ objectMode: true });
+  const tokenizeDot = new TokenizeDotTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseDot).pipe(writer);
+  reader.pipe(tokenizeDot).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'dot', value: '.' }, 'a']);
@@ -117,12 +117,12 @@ test('parse dot', done => {
   });
 });
 
-test('parse left paren', done => {
+test('tokenize left paren', done => {
   const input = ['(', 'a'];
-  const parseLeftParen = new ParseLeftParenTransform({ objectMode: true });
+  const tokenizeLeftParen = new TokenizeLeftParenTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseLeftParen).pipe(writer);
+  reader.pipe(tokenizeLeftParen).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'left_paren', value: '(' }, 'a']);
@@ -130,12 +130,12 @@ test('parse left paren', done => {
   });
 });
 
-test('parse right paren', done => {
+test('tokenize right paren', done => {
   const input = [')', 'a'];
-  const parseRightParen = new ParseRightParenTransform({ objectMode: true });
+  const tokenizeRightParen = new TokenizeRightParenTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseRightParen).pipe(writer);
+  reader.pipe(tokenizeRightParen).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([{ kind: 'right_paren', value: ')' }, 'a']);
@@ -143,12 +143,12 @@ test('parse right paren', done => {
   });
 });
 
-test('parse delimiter', done => {
+test('tokenize delimiter', done => {
   const input = [' ', 'a', '\t'];
-  const parseDelimiter = new ParseDelimiterTransform({ objectMode: true });
+  const tokenizeDelimiter = new TokenizeDelimiterTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseDelimiter).pipe(writer);
+  reader.pipe(tokenizeDelimiter).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([
@@ -160,13 +160,13 @@ test('parse delimiter', done => {
   });
 });
 
-test('parse function', done => {
+test('tokenize function', done => {
   const input = ['s', 'i', ' ', 's', 'i', 'n', 'n', 's', 'i'];
-  const parseDelimiter = new ParseDelimiterTransform({ objectMode: true });
-  const parseFunction = new ParseFunctionTransform({ objectMode: true });
+  const tokenizeDelimiter = new TokenizeDelimiterTransform({ objectMode: true });
+  const tokenizeFunction = new TokenizeFunctionTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
-  reader.pipe(parseDelimiter).pipe(parseFunction).pipe(writer);
+  reader.pipe(tokenizeDelimiter).pipe(tokenizeFunction).pipe(writer);
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([

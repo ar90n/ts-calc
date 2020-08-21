@@ -90,13 +90,13 @@ export type Tbd = {
   status: 'tbd';
 };
 
-export type ParseResult<T> = Success<T> | Failure | Tbd;
+export type TokenizeResult<T> = Success<T> | Failure | Tbd;
 
-const parseToken = <K, U, T extends { kind: K; value: U }>(
+const tokenizeToken = <K, U, T extends { kind: K; value: U }>(
   kind: string,
   value: string,
   expects: readonly U[],
-): ParseResult<T> => {
+): TokenizeResult<T> => {
   if (!expects.includes((value as unknown) as U)) {
     return { status: 'failure' };
   }
@@ -110,7 +110,7 @@ const parseToken = <K, U, T extends { kind: K; value: U }>(
   };
 };
 
-export const parseFunction: tokenParser<FUNCTION> = (value: string) => {
+export const tokenizeFunction: tokenTokenizer<FUNCTION> = (value: string) => {
   for (const exp of functionValues) {
     if (exp === value) {
       return {
@@ -133,22 +133,24 @@ export const parseFunction: tokenParser<FUNCTION> = (value: string) => {
   };
 };
 
-type tokenParser<T> = (value: string) => ParseResult<T>;
-export const parseZero: tokenParser<ZERO> = (value: string) =>
-  parseToken('zero', value, zeroValues);
-export const parseNonZeroDigit: tokenParser<NON_ZERO_DIGIT> = (value: string) =>
-  parseToken('non_zero_digit', value, nonZeroDigitValues);
-export const parsePlus: tokenParser<PLUS> = (value: string) =>
-  parseToken('plus', value, plusValues);
-export const parseMinus: tokenParser<MINUS> = (value: string) =>
-  parseToken('minus', value, minusValues);
-export const parseMult: tokenParser<MULT> = (value: string) =>
-  parseToken('mult', value, multValues);
-export const parseDiv: tokenParser<DIV> = (value: string) => parseToken('div', value, divValues);
-export const parseDot: tokenParser<DOT> = (value: string) => parseToken('dot', value, dotValues);
-export const parseLeftParen: tokenParser<LEFT_PAREN> = (value: string) =>
-  parseToken('left_paren', value, leftParenValues);
-export const parseRightParen: tokenParser<RIGHT_PAREN> = (value: string) =>
-  parseToken('right_paren', value, rightParenValues);
-export const parseDelimiter: tokenParser<DELIMITER> = (value: string) =>
-  parseToken('delimiter', value, delimiterValues);
+type tokenTokenizer<T> = (value: string) => TokenizeResult<T>;
+export const tokenizeZero: tokenTokenizer<ZERO> = (value: string) =>
+  tokenizeToken('zero', value, zeroValues);
+export const tokenizeNonZeroDigit: tokenTokenizer<NON_ZERO_DIGIT> = (value: string) =>
+  tokenizeToken('non_zero_digit', value, nonZeroDigitValues);
+export const tokenizePlus: tokenTokenizer<PLUS> = (value: string) =>
+  tokenizeToken('plus', value, plusValues);
+export const tokenizeMinus: tokenTokenizer<MINUS> = (value: string) =>
+  tokenizeToken('minus', value, minusValues);
+export const tokenizeMult: tokenTokenizer<MULT> = (value: string) =>
+  tokenizeToken('mult', value, multValues);
+export const tokenizeDiv: tokenTokenizer<DIV> = (value: string) =>
+  tokenizeToken('div', value, divValues);
+export const tokenizeDot: tokenTokenizer<DOT> = (value: string) =>
+  tokenizeToken('dot', value, dotValues);
+export const tokenizeLeftParen: tokenTokenizer<LEFT_PAREN> = (value: string) =>
+  tokenizeToken('left_paren', value, leftParenValues);
+export const tokenizeRightParen: tokenTokenizer<RIGHT_PAREN> = (value: string) =>
+  tokenizeToken('right_paren', value, rightParenValues);
+export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
+  tokenizeToken('delimiter', value, delimiterValues);
