@@ -1,66 +1,77 @@
+const zeroTag = 'zero' as const;
 const zeroValues = ['0'] as const;
 export type ZERO = {
-  kind: 'zero';
+  kind: typeof zeroTag;
   value: typeof zeroValues[number];
 };
 
+const nonZeroDigitTag = 'non_zero_digit' as const;
 const nonZeroDigitValues = ['1', '2', '3', '4', '5', '6', '7', '8', '9'] as const;
 export type NON_ZERO_DIGIT = {
-  kind: 'non_zero_digit';
+  kind: typeof nonZeroDigitTag;
   value: typeof nonZeroDigitValues[number];
 };
 
+const plusTag = 'plus' as const;
 const plusValues = ['+'] as const;
 export type PLUS = {
-  kind: 'plus';
+  kind: typeof plusTag;
   value: typeof plusValues[number];
 };
 
+const minusTag = 'minus' as const;
 const minusValues = ['-'] as const;
 export type MINUS = {
-  kind: 'minus';
+  kind: typeof minusTag;
   value: typeof minusValues[number];
 };
 
+const multTag = 'mult' as const;
 const multValues = ['*'] as const;
 export type MULT = {
-  kind: 'mult';
+  kind: typeof multTag;
   value: typeof multValues[number];
 };
 
+const divTag = 'div' as const;
 const divValues = ['/'] as const;
 export type DIV = {
-  kind: 'div';
+  kind: typeof divTag;
   value: typeof divValues[number];
 };
 
+const dotTag = 'dot' as const;
 const dotValues = ['.'] as const;
 export type DOT = {
-  kind: 'dot';
+  kind: typeof dotTag;
   value: typeof dotValues[number];
 };
 
+const functionTag = 'function' as const;
 const functionValues = ['sin', 'cos', 'tan', 'exp'] as const;
 export type FUNCTION = {
-  kind: 'function';
+  kind: typeof functionTag;
   value: typeof functionValues[number];
 };
 
+const leftParenTag = 'left_paren' as const;
 const leftParenValues = ['('] as const;
 export type LEFT_PAREN = {
-  kind: 'left_paren';
+  kind: typeof leftParenTag;
   value: typeof leftParenValues[number];
 };
 
+const rightParenTag = 'right_paren' as const;
 const rightParenValues = [')'] as const;
 export type RIGHT_PAREN = {
-  kind: 'right_paren';
+  kind: typeof rightParenTag;
   value: typeof rightParenValues[number];
 };
 
+const delimtierTag = 'delimiter' as const;
 const delimiterValues = [' ', '\t'] as const;
 export type DELIMITER = {
-  kind: 'delimtier';
+  kind: typeof delimtierTag;
   value: typeof delimiterValues[number];
 };
 
@@ -73,9 +84,9 @@ export type TOKEN =
   | DIV
   | DOT
   | FUNCTION
-  | DELIMITER
   | LEFT_PAREN
-  | RIGHT_PAREN;
+  | RIGHT_PAREN
+  | DELIMITER;
 
 export type Success<T> = {
   status: 'success';
@@ -93,8 +104,8 @@ export type Tbd = {
 export type TokenizeResult<T> = Success<T> | Failure | Tbd;
 
 const tokenizeToken = <K, U, T extends { kind: K; value: U }>(
-  kind: string,
   value: string,
+  kind: K,
   expects: readonly U[],
 ): TokenizeResult<T> => {
   if (!expects.includes((value as unknown) as U)) {
@@ -135,22 +146,26 @@ export const tokenizeFunction: tokenTokenizer<FUNCTION> = (value: string) => {
 
 type tokenTokenizer<T> = (value: string) => TokenizeResult<T>;
 export const tokenizeZero: tokenTokenizer<ZERO> = (value: string) =>
-  tokenizeToken('zero', value, zeroValues);
+  tokenizeToken(value, zeroTag, zeroValues);
 export const tokenizeNonZeroDigit: tokenTokenizer<NON_ZERO_DIGIT> = (value: string) =>
-  tokenizeToken('non_zero_digit', value, nonZeroDigitValues);
+  tokenizeToken(value, nonZeroDigitTag, nonZeroDigitValues);
 export const tokenizePlus: tokenTokenizer<PLUS> = (value: string) =>
-  tokenizeToken('plus', value, plusValues);
+  tokenizeToken(value, plusTag, plusValues);
 export const tokenizeMinus: tokenTokenizer<MINUS> = (value: string) =>
-  tokenizeToken('minus', value, minusValues);
+  tokenizeToken(value, minusTag, minusValues);
 export const tokenizeMult: tokenTokenizer<MULT> = (value: string) =>
-  tokenizeToken('mult', value, multValues);
+  tokenizeToken(value, multTag, multValues);
 export const tokenizeDiv: tokenTokenizer<DIV> = (value: string) =>
-  tokenizeToken('div', value, divValues);
+  tokenizeToken(value, divTag, divValues);
 export const tokenizeDot: tokenTokenizer<DOT> = (value: string) =>
-  tokenizeToken('dot', value, dotValues);
+  tokenizeToken(value, dotTag, dotValues);
 export const tokenizeLeftParen: tokenTokenizer<LEFT_PAREN> = (value: string) =>
-  tokenizeToken('left_paren', value, leftParenValues);
+  tokenizeToken(value, leftParenTag, leftParenValues);
 export const tokenizeRightParen: tokenTokenizer<RIGHT_PAREN> = (value: string) =>
-  tokenizeToken('right_paren', value, rightParenValues);
+  tokenizeToken(value, rightParenTag, rightParenValues);
 export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
-  tokenizeToken('delimiter', value, delimiterValues);
+  tokenizeToken(value, delimtierTag, delimiterValues);
+
+export const tokenOf = (kind: TOKEN['kind'], value: TOKEN['value']): TOKEN => {
+  return { kind, value } as TOKEN;
+};
