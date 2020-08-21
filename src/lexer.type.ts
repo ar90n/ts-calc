@@ -169,3 +169,7 @@ export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
 export const tokenOf = (kind: TOKEN['kind'], value: TOKEN['value']): TOKEN => {
   return { kind, value } as TOKEN;
 };
+
+export const hasKindAndValue = (v: any): v is { kind: unknown; value: unknown } => {
+  return v instanceof Object && 'kind' in v && 'value' in v;
+};
