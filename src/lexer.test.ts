@@ -1,21 +1,20 @@
 import { ObjectReadableMock, ObjectWritableMock } from 'stream-mock';
 
 import {
-  zeroTag,
-  nonZeroDigitTag,
-  plusTag,
-  minusTag,
-  multTag,
-  divTag,
-  dotTag,
-  leftParenTag,
-  rightParenTag,
-  delimtierTag,
-  functionTag,
+  ZERO,
+  NON_ZERO_DIGIT,
+  PLUS,
+  MINUS,
+  MULT,
+  DIV,
+  DOT,
+  LEFT_PAREN,
+  RIGHT_PAREN,
+  DELIMITER,
+  FUNCTION,
 } from './lexer.type';
 
 import {
-  tokenOf,
   TokenizeZeroTransform,
   TokenizeNonZeroDigitTransform,
   TokenizePlusTransform,
@@ -37,7 +36,7 @@ test('tokenize Zero', done => {
   reader.pipe(tokenizeZero).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(zeroTag, '0'), 'a']);
+    expect(writer.data).toEqual([ZERO.of(), 'a']);
     done();
   });
 });
@@ -52,15 +51,15 @@ test('tokenize NonZeroDigit', done => {
   writer.on('finish', () => {
     expect(writer.data).toEqual([
       '0',
-      tokenOf(nonZeroDigitTag, '1'),
-      tokenOf(nonZeroDigitTag, '2'),
-      tokenOf(nonZeroDigitTag, '3'),
-      tokenOf(nonZeroDigitTag, '4'),
-      tokenOf(nonZeroDigitTag, '5'),
-      tokenOf(nonZeroDigitTag, '6'),
-      tokenOf(nonZeroDigitTag, '7'),
-      tokenOf(nonZeroDigitTag, '8'),
-      tokenOf(nonZeroDigitTag, '9'),
+      NON_ZERO_DIGIT.of('1'),
+      NON_ZERO_DIGIT.of('2'),
+      NON_ZERO_DIGIT.of('3'),
+      NON_ZERO_DIGIT.of('4'),
+      NON_ZERO_DIGIT.of('5'),
+      NON_ZERO_DIGIT.of('6'),
+      NON_ZERO_DIGIT.of('7'),
+      NON_ZERO_DIGIT.of('8'),
+      NON_ZERO_DIGIT.of('9'),
       'a',
     ]);
     done();
@@ -75,7 +74,7 @@ test('tokenize plus', done => {
   reader.pipe(tokenizePlus).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(plusTag, '+'), 'a']);
+    expect(writer.data).toEqual([PLUS.of(), 'a']);
     done();
   });
 });
@@ -88,7 +87,7 @@ test('tokenize minus', done => {
   reader.pipe(tokenizeMinus).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(minusTag, '-'), 'a']);
+    expect(writer.data).toEqual([MINUS.of(), 'a']);
     done();
   });
 });
@@ -101,7 +100,7 @@ test('tokenize mult', done => {
   reader.pipe(tokenizeMult).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(multTag, '*'), 'a']);
+    expect(writer.data).toEqual([MULT.of(), 'a']);
     done();
   });
 });
@@ -114,7 +113,7 @@ test('tokenize div', done => {
   reader.pipe(tokenizeDiv).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(divTag, '/'), 'a']);
+    expect(writer.data).toEqual([DIV.of(), 'a']);
     done();
   });
 });
@@ -127,7 +126,7 @@ test('tokenize dot', done => {
   reader.pipe(tokenizeDot).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(dotTag, '.'), 'a']);
+    expect(writer.data).toEqual([DOT.of(), 'a']);
     done();
   });
 });
@@ -140,7 +139,7 @@ test('tokenize left paren', done => {
   reader.pipe(tokenizeLeftParen).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(leftParenTag, '('), 'a']);
+    expect(writer.data).toEqual([LEFT_PAREN.of(), 'a']);
     done();
   });
 });
@@ -153,7 +152,7 @@ test('tokenize right paren', done => {
   reader.pipe(tokenizeRightParen).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(rightParenTag, ')'), 'a']);
+    expect(writer.data).toEqual([RIGHT_PAREN.of(), 'a']);
     done();
   });
 });
@@ -166,7 +165,7 @@ test('tokenize delimiter', done => {
   reader.pipe(tokenizeDelimiter).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(delimtierTag, ' '), 'a', tokenOf(delimtierTag, '\t')]);
+    expect(writer.data).toEqual([DELIMITER.of(' '), 'a', DELIMITER.of('\t')]);
     done();
   });
 });
@@ -180,15 +179,7 @@ test('tokenize function', done => {
   reader.pipe(tokenizeDelimiter).pipe(tokenizeFunction).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([
-      's',
-      'i',
-      tokenOf(delimtierTag, ' '),
-      tokenOf(functionTag, 'sin'),
-      'n',
-      's',
-      'i',
-    ]);
+    expect(writer.data).toEqual(['s', 'i', DELIMITER.of(' '), FUNCTION.of('sin'), 'n', 's', 'i']);
     done();
   });
 });

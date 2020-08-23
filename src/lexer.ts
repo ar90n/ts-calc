@@ -1,62 +1,19 @@
 import { Transform, TransformOptions, TransformCallback } from 'stream';
 
 import {
-  zeroTag,
-  zeroValues,
   ZERO,
-  nonZeroDigitTag,
-  nonZeroDigitValues,
   NON_ZERO_DIGIT,
-  plusTag,
-  plusValues,
   PLUS,
-  minusTag,
-  minusValues,
   MINUS,
-  multTag,
-  multValues,
   MULT,
-  divTag,
-  divValues,
   DIV,
-  dotTag,
-  dotValues,
   DOT,
-  functionTag,
-  functionValues,
   FUNCTION,
-  leftParenTag,
-  leftParenValues,
   LEFT_PAREN,
-  rightParenTag,
-  rightParenValues,
   RIGHT_PAREN,
-  delimtierTag,
-  delimiterValues,
   DELIMITER,
   TOKEN,
 } from './lexer.type';
-
-export const hasKindAndValue = (v: unknown): v is { kind: unknown; value: unknown } => {
-  return v instanceof Object && 'kind' in v && 'value' in v;
-};
-
-export const isZero = (v: unknown): v is ZERO => hasKindAndValue(v) && v.kind === zeroTag;
-export const isNonZeroDigit = (v: unknown): v is NON_ZERO_DIGIT =>
-  hasKindAndValue(v) && v.kind === nonZeroDigitTag;
-export const isPlus = (v: unknown): v is PLUS => hasKindAndValue(v) && v.kind === plusTag;
-export const isMinus = (v: unknown): v is MINUS => hasKindAndValue(v) && v.kind === minusTag;
-export const isMult = (v: unknown): v is MULT => hasKindAndValue(v) && v.kind === multTag;
-export const isDiv = (v: unknown): v is DIV => hasKindAndValue(v) && v.kind === divTag;
-export const isDot = (v: unknown): v is DOT => hasKindAndValue(v) && v.kind === dotTag;
-export const isFunction = (v: unknown): v is FUNCTION =>
-  hasKindAndValue(v) && v.kind === functionTag;
-export const isLeftParen = (v: unknown): v is LEFT_PAREN =>
-  hasKindAndValue(v) && v.kind === leftParenTag;
-export const isRightParen = (v: unknown): v is RIGHT_PAREN =>
-  hasKindAndValue(v) && v.kind === rightParenTag;
-export const isDelimiter = (v: unknown): v is DELIMITER =>
-  hasKindAndValue(v) && v.kind === delimtierTag;
 
 export type Success<T> = {
   status: 'success';
@@ -91,12 +48,12 @@ const tokenizeToken = <K, U, T extends { kind: K; value: U }>(
 };
 
 export const tokenizeFunction: tokenTokenizer<FUNCTION> = (value: string) => {
-  for (const exp of functionValues) {
+  for (const exp of FUNCTION.values) {
     if (exp === value) {
       return {
         status: 'success',
         token: {
-          kind: functionTag,
+          kind: FUNCTION.tag,
           value: value as FUNCTION['value'],
         },
       };
@@ -115,29 +72,25 @@ export const tokenizeFunction: tokenTokenizer<FUNCTION> = (value: string) => {
 
 type tokenTokenizer<T> = (value: string) => TokenizeResult<T>;
 export const tokenizeZero: tokenTokenizer<ZERO> = (value: string) =>
-  tokenizeToken(value, zeroTag, zeroValues);
+  tokenizeToken(value, ZERO.tag, ZERO.values);
 export const tokenizeNonZeroDigit: tokenTokenizer<NON_ZERO_DIGIT> = (value: string) =>
-  tokenizeToken(value, nonZeroDigitTag, nonZeroDigitValues);
+  tokenizeToken(value, NON_ZERO_DIGIT.tag, NON_ZERO_DIGIT.values);
 export const tokenizePlus: tokenTokenizer<PLUS> = (value: string) =>
-  tokenizeToken(value, plusTag, plusValues);
+  tokenizeToken(value, PLUS.tag, PLUS.values);
 export const tokenizeMinus: tokenTokenizer<MINUS> = (value: string) =>
-  tokenizeToken(value, minusTag, minusValues);
+  tokenizeToken(value, MINUS.tag, MINUS.values);
 export const tokenizeMult: tokenTokenizer<MULT> = (value: string) =>
-  tokenizeToken(value, multTag, multValues);
+  tokenizeToken(value, MULT.tag, MULT.values);
 export const tokenizeDiv: tokenTokenizer<DIV> = (value: string) =>
-  tokenizeToken(value, divTag, divValues);
+  tokenizeToken(value, DIV.tag, DIV.values);
 export const tokenizeDot: tokenTokenizer<DOT> = (value: string) =>
-  tokenizeToken(value, dotTag, dotValues);
+  tokenizeToken(value, DOT.tag, DOT.values);
 export const tokenizeLeftParen: tokenTokenizer<LEFT_PAREN> = (value: string) =>
-  tokenizeToken(value, leftParenTag, leftParenValues);
+  tokenizeToken(value, LEFT_PAREN.tag, LEFT_PAREN.values);
 export const tokenizeRightParen: tokenTokenizer<RIGHT_PAREN> = (value: string) =>
-  tokenizeToken(value, rightParenTag, rightParenValues);
+  tokenizeToken(value, RIGHT_PAREN.tag, RIGHT_PAREN.values);
 export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
-  tokenizeToken(value, delimtierTag, delimiterValues);
-
-export const tokenOf = (kind: TOKEN['kind'], value: TOKEN['value']): TOKEN => {
-  return { kind, value } as TOKEN;
-};
+  tokenizeToken(value, DELIMITER.tag, DELIMITER.values);
 
 class TokenizeTransform extends Transform {
   _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {

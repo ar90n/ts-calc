@@ -1,24 +1,23 @@
 import { ObjectReadableMock, ObjectWritableMock } from 'stream-mock';
 import { DropDelimiterTransform, ParseNaturalNumbreaTransform } from './parser';
-import { delimtierTag, zeroTag, nonZeroDigitTag } from './lexer.type';
-import { naturalNumberTag } from './parser.type';
-import { tokenOf } from './lexer';
+import { ZERO, DELIMITER, MINUS, NON_ZERO_DIGIT } from './lexer.type';
+import { NATURAL_NUMBER } from './parser.type';
 
 test('drop delimiters', done => {
-  const input = [tokenOf(zeroTag, '0'), tokenOf(delimtierTag, ' '), tokenOf(zeroTag, '0')];
+  const input = [ZERO.of(), DELIMITER.of(' '), ZERO.of()];
   const dropDelimiter = new DropDelimiterTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
   reader.pipe(dropDelimiter).pipe(writer);
 
   writer.on('finish', () => {
-    expect(writer.data).toEqual([tokenOf(zeroTag, '0'), tokenOf(zeroTag, '0')]);
+    expect(writer.data).toEqual([ZERO.of(), ZERO.of()]);
     done();
   });
 });
 
 test('parse natural number', done => {
-  const input = [tokenOf(nonZeroDigitTag, '1')];
+  const input = [MINUS.of(), NON_ZERO_DIGIT.of('1'), ZERO.of(), ZERO.of(), NON_ZERO_DIGIT.of('8')];
   const parseNaturalNumber = new ParseNaturalNumbreaTransform({ objectMode: true });
   const reader = new ObjectReadableMock(input);
   const writer = new ObjectWritableMock();
@@ -26,7 +25,11 @@ test('parse natural number', done => {
 
   writer.on('finish', () => {
     expect(writer.data).toEqual([
-      { kind: naturalNumberTag, value: [null, tokenOf(nonZeroDigitTag, '1'), []] },
+      NATURAL_NUMBER.of(MINUS.of(), NON_ZERO_DIGIT.of('1'), [
+        ZERO.of(),
+        ZERO.of(),
+        NON_ZERO_DIGIT.of('8'),
+      ]),
     ]);
     done();
   });
