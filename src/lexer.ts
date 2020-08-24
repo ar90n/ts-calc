@@ -29,20 +29,19 @@ export type Tbd = {
 };
 export type TokenizeResult<T> = Success<T> | Failure | Tbd;
 
-const tokenizeToken = <K, U, T extends { kind: K; value: U }>(
+const tokenizeToken = <T extends Pick<T, 'kind' | 'value'>>(
   value: string,
-  kind: K,
-  expects: readonly U[],
+  obj: { tag: T['kind']; values: readonly T['value'][] },
 ): TokenizeResult<T> => {
-  if (!expects.includes((value as unknown) as U)) {
+  if (!obj.values.includes((value as unknown) as T['value'])) {
     return { status: 'failure' };
   }
 
   return {
     status: 'success',
     token: {
-      kind: (kind as unknown) as K,
-      value: (value as unknown) as U,
+      kind: obj.tag,
+      value: (value as unknown) as T['value'],
     } as T,
   };
 };
@@ -71,26 +70,20 @@ export const tokenizeFunction: tokenTokenizer<FUNCTION> = (value: string) => {
 };
 
 type tokenTokenizer<T> = (value: string) => TokenizeResult<T>;
-export const tokenizeZero: tokenTokenizer<ZERO> = (value: string) =>
-  tokenizeToken(value, ZERO.tag, ZERO.values);
+export const tokenizeZero: tokenTokenizer<ZERO> = (value: string) => tokenizeToken(value, ZERO);
 export const tokenizeNonZeroDigit: tokenTokenizer<NON_ZERO_DIGIT> = (value: string) =>
-  tokenizeToken(value, NON_ZERO_DIGIT.tag, NON_ZERO_DIGIT.values);
-export const tokenizePlus: tokenTokenizer<PLUS> = (value: string) =>
-  tokenizeToken(value, PLUS.tag, PLUS.values);
-export const tokenizeMinus: tokenTokenizer<MINUS> = (value: string) =>
-  tokenizeToken(value, MINUS.tag, MINUS.values);
-export const tokenizeMult: tokenTokenizer<MULT> = (value: string) =>
-  tokenizeToken(value, MULT.tag, MULT.values);
-export const tokenizeDiv: tokenTokenizer<DIV> = (value: string) =>
-  tokenizeToken(value, DIV.tag, DIV.values);
-export const tokenizeDot: tokenTokenizer<DOT> = (value: string) =>
-  tokenizeToken(value, DOT.tag, DOT.values);
+  tokenizeToken(value, NON_ZERO_DIGIT);
+export const tokenizePlus: tokenTokenizer<PLUS> = (value: string) => tokenizeToken(value, PLUS);
+export const tokenizeMinus: tokenTokenizer<MINUS> = (value: string) => tokenizeToken(value, MINUS);
+export const tokenizeMult: tokenTokenizer<MULT> = (value: string) => tokenizeToken(value, MULT);
+export const tokenizeDiv: tokenTokenizer<DIV> = (value: string) => tokenizeToken(value, DIV);
+export const tokenizeDot: tokenTokenizer<DOT> = (value: string) => tokenizeToken(value, DOT);
 export const tokenizeLeftParen: tokenTokenizer<LEFT_PAREN> = (value: string) =>
-  tokenizeToken(value, LEFT_PAREN.tag, LEFT_PAREN.values);
+  tokenizeToken(value, LEFT_PAREN);
 export const tokenizeRightParen: tokenTokenizer<RIGHT_PAREN> = (value: string) =>
-  tokenizeToken(value, RIGHT_PAREN.tag, RIGHT_PAREN.values);
+  tokenizeToken(value, RIGHT_PAREN);
 export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
-  tokenizeToken(value, DELIMITER.tag, DELIMITER.values);
+  tokenizeToken(value, DELIMITER);
 
 class TokenizeTransform extends Transform {
   _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {
