@@ -6,7 +6,7 @@ export const hasKindAndValue = (v: unknown): v is { kind: unknown; value: unknow
   return v instanceof Object && 'kind' in v && 'value' in v;
 };
 
-export const create = <
+export const creatToken = <
   T extends Pick<T, 'kind' | 'value'>,
   F = T['value'] extends UnionToIntersection<T['value']> ? () => T : (v: T['value']) => T
 >(
