@@ -1,0 +1,48 @@
+{
+  "name": "ts-calc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:ar90n/ts-calc.git",
+  "author": "Masahiro Wada <argon.argon.argon@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --build ./tsconfig.build.json",
+    "eslint": "eslint './{src,tests}/**/*.ts'",
+    "eslint:fix": "eslint --fix './{src,tests}/**/*.ts'",
+    "prettier": "prettier --config ./.prettierrc -c './*.json' -c './{src,tests}/**/*.{ts,tsx}'",
+    "prettier:fix": "npm run prettier -- --write",
+    "tsc:check": "tsc --noEmit -p .",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:cov": "jest --coverage"
+  },
+  "test": "jest",
+  "devDependencies": {
+    "@types/jest": "^26.0.9",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "lint-staged": "^10.2.11",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
+    "stream-mock": "^2.0.5",
+    "ts-jest": "^26.1.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run prepush"
+    }
+  },
+  "lint-staged": {
+    "./{src,tests,e2e}/**/*.ts": "eslint",
+    "./*.json": "prettier -c"
+  },
+  "dependencies": {}
+}
