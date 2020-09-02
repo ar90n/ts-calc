@@ -1,6 +1,4 @@
-import { ObjectReadableMock, ObjectWritableMock } from 'stream-mock';
 import {
-  DropDelimiterTransform,
   parseZero,
   parsePlus,
   parseMinus,
@@ -18,7 +16,6 @@ import {
 } from './parser';
 import {
   ZERO,
-  DELIMITER,
   FUNCTION,
   PLUS,
   MINUS,
@@ -29,19 +26,6 @@ import {
   LEFT_PAREN,
   RIGHT_PAREN,
 } from './lexer.type';
-
-test('drop delimiters', done => {
-  const input = [ZERO.of(), DELIMITER.of(' '), ZERO.of()];
-  const dropDelimiter = new DropDelimiterTransform({ objectMode: true });
-  const reader = new ObjectReadableMock(input);
-  const writer = new ObjectWritableMock();
-  reader.pipe(dropDelimiter).pipe(writer);
-
-  writer.on('finish', () => {
-    expect(writer.data).toEqual([ZERO.of(), ZERO.of()]);
-    done();
-  });
-});
 
 test('parse zero', () => {
   const input = [ZERO.of()];

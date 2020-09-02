@@ -207,3 +207,13 @@ export class TokenizeDelimiterTransform extends TokenizeTransform {
     return tokenizeDelimiter(chunk);
   }
 }
+
+export class DropDelimiterTransform extends Transform {
+  _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {
+    if (!DELIMITER.is(chunk)) {
+      this.push(chunk);
+    }
+
+    done();
+  }
+}

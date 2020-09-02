@@ -26,6 +26,7 @@ import {
   TokenizeRightParenTransform,
   TokenizeDelimiterTransform,
   TokenizeFunctionTransform,
+  DropDelimiterTransform,
 } from './lexer';
 
 test('tokenize Zero', done => {
@@ -180,6 +181,19 @@ test('tokenize function', done => {
 
   writer.on('finish', () => {
     expect(writer.data).toEqual(['s', 'i', DELIMITER.of(' '), FUNCTION.of('sin'), 'n', 's', 'i']);
+    done();
+  });
+});
+
+test('drop delimiters', done => {
+  const input = [ZERO.of(), DELIMITER.of(' '), ZERO.of()];
+  const dropDelimiter = new DropDelimiterTransform({ objectMode: true });
+  const reader = new ObjectReadableMock(input);
+  const writer = new ObjectWritableMock();
+  reader.pipe(dropDelimiter).pipe(writer);
+
+  writer.on('finish', () => {
+    expect(writer.data).toEqual([ZERO.of(), ZERO.of()]);
     done();
   });
 });
