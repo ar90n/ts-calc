@@ -10,9 +10,9 @@ PLUS ::= "+"
 MINUS ::= "-"
 MULT ::= "*"
 DIV ::= "/"
-DOT :: = "."
+DOT ::= "."
 FUNCTION ::= "sin" | "cos" | "tan" | "exp"
-LEFT_PAREN :: = "("
+LEFT_PAREN ::= "("
 RIGHT_PAREN ::= ")"
 
 SIGN ::= PLUS | MINUS
