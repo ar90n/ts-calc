@@ -17,11 +17,12 @@ const parserStatusValues = ['ok', 'failed'];
 type ParserStatus = typeof parserStatusValues[number];
 
 type Output<T> = T | null | Output<T>[];
+export type AST = Output<NODE>;
 
 type ParserResult = {
   status: ParserStatus;
   consumedNodes: number;
-  output: Output<NODE>;
+  output: AST;
 };
 
 type Parser = (v: NODE[]) => ParserResult;
@@ -63,7 +64,7 @@ const Repeat = (parser: Parser): Parser => {
   return (v: NODE[]) => {
     let consumedNodes = 0;
     const output = [];
-    /* eslint no-constant-condition: 0 */
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const cur = parser(v.slice(consumedNodes));
       if (cur.status !== 'ok') {
@@ -164,19 +165,15 @@ export const parseNumber = Just(
   Sequence([parseIntegralNumber, Optional(parseFraction)]),
 );
 
-const [_parseExpr, setParseExpr] = Lazy();
-const [_parseTerm, setParseTerm] = Lazy();
 const [_parseFactor, setParseFactor] = Lazy();
-export const parseExpr = Just(
-  EXPR.tag,
-  Sequence([_parseTerm, Optional(Sequence([parseOp0, _parseExpr]))]),
-);
-setParseExpr(parseExpr);
 export const parseTerm = Just(
   TERM.tag,
-  Sequence([_parseFactor, Optional(Sequence([parseOp1, _parseTerm]))]),
+  Sequence([_parseFactor, Optional(Repeat(Sequence([parseOp1, _parseFactor])))]),
 );
-setParseTerm(parseTerm);
+export const parseExpr = Just(
+  EXPR.tag,
+  Sequence([parseTerm, Optional(Repeat(Sequence([parseOp0, parseTerm])))]),
+);
 export const parseFactor = Or([
   Just(CALL.tag, Sequence([Optional(parseFunction), parseLeftParen, parseExpr, parseRightParen])),
   parseNumber,

@@ -53,139 +53,119 @@ test('eval expr', () => {
                 },
               ],
             },
-            null,
+            [],
           ],
         },
         [
-          { kind: 'plus', value: '+' },
-          {
-            kind: 'expr',
-            value: [
-              {
-                kind: 'term',
-                value: [
-                  {
-                    kind: 'call',
-                    value: [
-                      null,
-                      { kind: 'left_paren', value: '(' },
-                      {
-                        kind: 'expr',
-                        value: [
-                          {
-                            kind: 'term',
-                            value: [
-                              {
-                                kind: 'number',
-                                value: [
-                                  {
-                                    kind: 'natural_number',
-                                    value: [null, { kind: 'non_zero_digit', value: '8' }, []],
-                                  },
-                                  null,
-                                ],
-                              },
-                              null,
-                            ],
-                          },
-                          [
-                            { kind: 'plus', value: '+' },
+          [
+            { kind: 'plus', value: '+' },
+            {
+              kind: 'term',
+              value: [
+                {
+                  kind: 'call',
+                  value: [
+                    null,
+                    { kind: 'left_paren', value: '(' },
+                    {
+                      kind: 'expr',
+                      value: [
+                        {
+                          kind: 'term',
+                          value: [
                             {
-                              kind: 'expr',
+                              kind: 'number',
                               value: [
                                 {
-                                  kind: 'term',
-                                  value: [
-                                    { kind: 'number', value: [{ kind: 'zero', value: '0' }, null] },
-                                    null,
-                                  ],
+                                  kind: 'natural_number',
+                                  value: [null, { kind: 'non_zero_digit', value: '8' }, []],
                                 },
                                 null,
                               ],
                             },
+                            [],
+                          ],
+                        },
+                        [
+                          [
+                            { kind: 'plus', value: '+' },
+                            {
+                              kind: 'term',
+                              value: [
+                                { kind: 'number', value: [{ kind: 'zero', value: '0' }, null] },
+                                [],
+                              ],
+                            },
                           ],
                         ],
-                      },
-                      { kind: 'right_paren', value: ')' },
-                    ],
-                  },
+                      ],
+                    },
+                    { kind: 'right_paren', value: ')' },
+                  ],
+                },
+                [
                   [
                     { kind: 'mult', value: '*' },
                     {
-                      kind: 'term',
+                      kind: 'call',
                       value: [
+                        { kind: 'function', value: 'sin' },
+                        { kind: 'left_paren', value: '(' },
                         {
-                          kind: 'call',
+                          kind: 'expr',
                           value: [
-                            { kind: 'function', value: 'sin' },
-                            { kind: 'left_paren', value: '(' },
                             {
-                              kind: 'expr',
+                              kind: 'term',
                               value: [
+                                {
+                                  kind: 'number',
+                                  value: [
+                                    { kind: 'zero', value: '0' },
+                                    {
+                                      kind: 'fraction',
+                                      value: [
+                                        { kind: 'dot', value: '.' },
+                                        [{ kind: 'non_zero_digit', value: '1' }],
+                                      ],
+                                    },
+                                  ],
+                                },
+                                [],
+                              ],
+                            },
+                            [
+                              [
+                                { kind: 'plus', value: '+' },
                                 {
                                   kind: 'term',
                                   value: [
                                     {
                                       kind: 'number',
                                       value: [
-                                        { kind: 'zero', value: '0' },
                                         {
-                                          kind: 'fraction',
-                                          value: [
-                                            { kind: 'dot', value: '.' },
-                                            [{ kind: 'non_zero_digit', value: '1' }],
-                                          ],
+                                          kind: 'natural_number',
+                                          value: [null, { kind: 'non_zero_digit', value: '2' }, []],
                                         },
+                                        null,
                                       ],
                                     },
-                                    null,
+                                    [],
                                   ],
                                 },
-                                [
-                                  { kind: 'plus', value: '+' },
-                                  {
-                                    kind: 'expr',
-                                    value: [
-                                      {
-                                        kind: 'term',
-                                        value: [
-                                          {
-                                            kind: 'number',
-                                            value: [
-                                              {
-                                                kind: 'natural_number',
-                                                value: [
-                                                  null,
-                                                  { kind: 'non_zero_digit', value: '2' },
-                                                  [],
-                                                ],
-                                              },
-                                              null,
-                                            ],
-                                          },
-                                          null,
-                                        ],
-                                      },
-                                      null,
-                                    ],
-                                  },
-                                ],
                               ],
-                            },
-                            { kind: 'right_paren', value: ')' },
+                            ],
                           ],
                         },
-                        null,
+                        { kind: 'right_paren', value: ')' },
                       ],
                     },
                   ],
                 ],
-              },
-              null,
-            ],
-          },
+              ],
+            },
+          ],
         ],
       ],
     } as unknown) as EXPR),
-  ).toBe(32.008);
+  ).toBeCloseTo(38.00647493319099);
 });

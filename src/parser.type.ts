@@ -84,29 +84,14 @@ export const OP1 = {
   is: (v: unknown): v is OP0 => MULT.is(v) || DIV.is(v),
 };
 
-const rhExprTag = 'rh_expr' as const;
-export type RH_EXPR = {
-  kind: typeof rhExprTag;
-  value: [OP0, EXPR];
-};
-export const RH_EXPR = {
-  tag: rhExprTag,
-  of: (op: OP0, expr: EXPR) =>
-    ({
-      kind: RH_EXPR.tag,
-      value: [op, expr],
-    } as RH_EXPR),
-  is: (v: unknown): v is RH_EXPR => hasKindAndValue(v) && v.kind === RH_EXPR.tag,
-};
-
 const exprTag = 'expr' as const;
 export type EXPR = {
   kind: typeof exprTag;
-  value: [TERM, RH_EXPR | null];
+  value: [TERM, [OP0, TERM][]];
 };
 export const EXPR = {
   tag: exprTag,
-  of: (term: TERM, rhExpr: RH_EXPR | null) =>
+  of: (term: TERM, rhExpr: [OP0, TERM][]) =>
     ({
       kind: EXPR.tag,
       value: [term, rhExpr],
@@ -114,29 +99,14 @@ export const EXPR = {
   is: (v: unknown): v is EXPR => hasKindAndValue(v) && v.kind === EXPR.tag,
 };
 
-const rhTermTag = 'rh_term' as const;
-export type RH_TERM = {
-  kind: typeof rhTermTag;
-  value: [OP1, TERM];
-};
-export const RH_TERM = {
-  tag: rhTermTag,
-  of: (op: OP1, term: TERM) =>
-    ({
-      kind: RH_TERM.tag,
-      value: [op, term],
-    } as RH_TERM),
-  is: (v: unknown): v is RH_TERM => hasKindAndValue(v) && v.kind === RH_TERM.tag,
-};
-
 const termTag = 'term' as const;
 export type TERM = {
   kind: typeof termTag;
-  value: [FACTOR, RH_TERM | null];
+  value: [FACTOR, [OP1, FACTOR][]];
 };
 export const TERM = {
   tag: termTag,
-  of: (factor: FACTOR, rhTerm: RH_TERM | null) =>
+  of: (factor: FACTOR, rhTerm: [OP1, FACTOR][]) =>
     ({
       kind: TERM.tag,
       value: [factor, rhTerm],
@@ -173,9 +143,7 @@ export type NODE =
   | NUMBER
   | OP0
   | OP1
-  | RH_EXPR
   | EXPR
-  | RH_TERM
   | TERM
   | CALL
   | FACTOR

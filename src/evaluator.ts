@@ -14,11 +14,11 @@ import {
   NATURAL_NUMBER,
   INTEGRAL_NUMBER,
   FRACTION,
+  OP0,
+  OP1,
   NUMBER,
   DIGIT,
-  RH_EXPR,
   EXPR,
-  RH_TERM,
   TERM,
   CALL,
   FACTOR,
@@ -71,38 +71,31 @@ export function evaluate(v: NODE): number | string {
       return sign * num;
     }
     case FRACTION.tag: {
-      return v.value[1].map(evaluate).reduceRight((arr: number, cur: number) => 0.1 * arr + cur, 0);
+      return (
+        0.1 * v.value[1].map(evaluate).reduceRight((arr: number, cur: number) => 0.1 * arr + cur, 0)
+      );
     }
     case NUMBER.tag: {
-      const integer = evaluate(v.value[0]);
-      const fraction = evaluate(v.value[1]);
-      return integer + fraction;
+      let num = evaluate(v.value[0]);
+      if (v.value[1] !== null) {
+        num += evaluate(v.value[1]);
+      }
+      return num;
     }
     case EXPR.tag: {
-      let num = evaluate(v.value[0]);
-
-      const rh = v.value[1];
-      if (rh !== null && RH_EXPR.is(rh)) {
-        const sign = evaluate(rh.value[0]);
-        num += sign * evaluate(rh.value[1]);
-      }
-
-      return num;
+      return v.value[1].reduce((arr: number, cur: [OP0, TERM]) => {
+        return arr + evaluate(cur[0]) * evaluate(cur[1]);
+      }, evaluate(v.value[0]));
     }
     case TERM.tag: {
-      let num = evaluate(v.value[0]);
-
-      const rh = v.value[1];
-      if (rh !== null && RH_TERM.is(rh)) {
-        const rh_num = evaluate(rh.value[1]);
-        if (MULT.is(rh.value[0])) {
-          num *= rh_num;
+      return v.value[1].reduce((arr: number, cur: [OP1, FACTOR]) => {
+        const rh_num = evaluate(cur[1]);
+        if (MULT.is(cur[0])) {
+          return arr * rh_num;
         } else {
-          num /= rh_num;
+          return arr / rh_num;
         }
-      }
-
-      return num;
+      }, evaluate(v.value[0]));
     }
     case CALL.tag: {
       const func = getFunction(v.value[0]);
