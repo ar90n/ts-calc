@@ -86,7 +86,7 @@ export const tokenizeDelimiter: tokenTokenizer<DELIMITER> = (value: string) =>
   tokenizeToken(value, DELIMITER);
 
 class TokenizeTransform extends Transform {
-  _transform(chunk: string | Buffer, encoding: string, done: TransformCallback): void {
+  _transform(chunk: string, encoding: string, done: TransformCallback): void {
     if (typeof chunk === 'string') {
       const res = this._tokenize(chunk);
       if (res.status === 'success') {

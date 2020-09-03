@@ -6,6 +6,7 @@
   "author": "Masahiro Wada <argon.argon.argon@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "calc": "./node_modules/ts-node/dist/bin.js ./src/index.ts",
     "prepush": "yarn run eslint",
     "build": "tsc --build ./tsconfig.build.json",
     "eslint": "eslint './{src,tests}/**/*.ts'",
