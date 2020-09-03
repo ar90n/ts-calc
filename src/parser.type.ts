@@ -9,8 +9,8 @@ import {
   DIV,
   DOT,
   FUNCTION,
-  //LEFT_PAREN,
-  //RIGHT_PAREN,
+  LEFT_PAREN,
+  RIGHT_PAREN,
   TOKEN,
 } from './lexer.type';
 
@@ -31,10 +31,11 @@ export type NATURAL_NUMBER = {
 };
 export const NATURAL_NUMBER = {
   tag: naturalNumberTag,
-  of: (sign: SIGN | null, firstDigit: NON_ZERO_DIGIT, otherDigits: DIGIT[]) => ({
-    kind: NATURAL_NUMBER.tag,
-    value: [sign, firstDigit, otherDigits],
-  }),
+  of: (sign: SIGN | null, firstDigit: NON_ZERO_DIGIT, otherDigits: DIGIT[]) =>
+    ({
+      kind: NATURAL_NUMBER.tag,
+      value: [sign, firstDigit, otherDigits],
+    } as NATURAL_NUMBER),
   is: (v: unknown): v is NATURAL_NUMBER => hasKindAndValue(v) && v.kind === NATURAL_NUMBER.tag,
 };
 
@@ -46,14 +47,15 @@ export const INTEGRAL_NUMBER = {
 const fractionTag = 'fraction' as const;
 export type FRACTION = {
   kind: typeof fractionTag;
-  value: [DOT, DIGIT[], NON_ZERO_DIGIT];
+  value: [DOT, DIGIT[]];
 };
 export const FRACTION = {
   tag: fractionTag,
-  of: (dot: DOT, digits: DIGIT[], lastDigit: NON_ZERO_DIGIT) => ({
-    kind: FRACTION.tag,
-    value: [dot, digits, lastDigit],
-  }),
+  of: (dot: DOT, digits: DIGIT[]) =>
+    ({
+      kind: FRACTION.tag,
+      value: [dot, digits],
+    } as FRACTION),
   is: (v: unknown): v is FRACTION => hasKindAndValue(v) && v.kind === FRACTION.tag,
 };
 
@@ -64,10 +66,11 @@ export type NUMBER = {
 };
 export const NUMBER = {
   tag: numberTag,
-  of: (int: INTEGRAL_NUMBER, fraction: FRACTION) => ({
-    kind: NUMBER.tag,
-    value: [int, fraction],
-  }),
+  of: (int: INTEGRAL_NUMBER, fraction: FRACTION) =>
+    ({
+      kind: NUMBER.tag,
+      value: [int, fraction],
+    } as NUMBER),
   is: (v: unknown): v is NUMBER => hasKindAndValue(v) && v.kind === NUMBER.tag,
 };
 
@@ -88,10 +91,11 @@ export type RH_EXPR = {
 };
 export const RH_EXPR = {
   tag: rhExprTag,
-  of: (op: OP0, expr: EXPR) => ({
-    kind: RH_EXPR.tag,
-    value: [op, expr],
-  }),
+  of: (op: OP0, expr: EXPR) =>
+    ({
+      kind: RH_EXPR.tag,
+      value: [op, expr],
+    } as RH_EXPR),
   is: (v: unknown): v is RH_EXPR => hasKindAndValue(v) && v.kind === RH_EXPR.tag,
 };
 
@@ -102,24 +106,26 @@ export type EXPR = {
 };
 export const EXPR = {
   tag: exprTag,
-  of: (term: TERM, rhExpr: RH_EXPR | null) => ({
-    kind: EXPR.tag,
-    value: [term, rhExpr],
-  }),
+  of: (term: TERM, rhExpr: RH_EXPR | null) =>
+    ({
+      kind: EXPR.tag,
+      value: [term, rhExpr],
+    } as EXPR),
   is: (v: unknown): v is EXPR => hasKindAndValue(v) && v.kind === EXPR.tag,
 };
 
 const rhTermTag = 'rh_term' as const;
 export type RH_TERM = {
   kind: typeof rhTermTag;
-  value: [TERM, RH_TERM | null];
+  value: [OP1, TERM];
 };
 export const RH_TERM = {
   tag: rhTermTag,
-  of: (op: OP1, term: TERM) => ({
-    kind: RH_TERM.tag,
-    value: [op, term],
-  }),
+  of: (op: OP1, term: TERM) =>
+    ({
+      kind: RH_TERM.tag,
+      value: [op, term],
+    } as RH_TERM),
   is: (v: unknown): v is RH_TERM => hasKindAndValue(v) && v.kind === RH_TERM.tag,
 };
 
@@ -130,24 +136,26 @@ export type TERM = {
 };
 export const TERM = {
   tag: termTag,
-  of: (factor: FACTOR, rhTerm: RH_TERM | null) => ({
-    kind: TERM.tag,
-    value: [factor, rhTerm],
-  }),
+  of: (factor: FACTOR, rhTerm: RH_TERM | null) =>
+    ({
+      kind: TERM.tag,
+      value: [factor, rhTerm],
+    } as TERM),
   is: (v: unknown): v is TERM => hasKindAndValue(v) && v.kind === TERM.tag,
 };
 
 const callTag = 'call' as const;
 export type CALL = {
   kind: typeof callTag;
-  value: [FUNCTION | null, EXPR];
+  value: [FUNCTION | null, LEFT_PAREN, EXPR, RIGHT_PAREN];
 };
 export const CALL = {
   tag: callTag,
-  of: (func: FUNCTION | null, expr: EXPR) => ({
-    kind: TERM.tag,
-    value: [func, expr],
-  }),
+  of: (func: FUNCTION | null, expr: EXPR) =>
+    ({
+      kind: CALL.tag,
+      value: [func, LEFT_PAREN.of(), expr, RIGHT_PAREN.of()],
+    } as CALL),
   is: (v: unknown): v is CALL => hasKindAndValue(v) && v.kind === CALL.tag,
 };
 
