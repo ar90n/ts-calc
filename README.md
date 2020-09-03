@@ -1,6 +1,15 @@
 # ts-calc
 Calculator written by typescript
 
+## Example
+```bash
+$echo '1 + 1/1 + 1/(1 * 2) + 1/(1 * 2 * 3) + 1/(1 * 2 * 3 * 4) + 1/(1* 2*3*4*5) - exp(1)' | yarn run calc
+yarn run v1.22.4
+$ ./node_modules/ts-node/dist/bin.js ./src/index.ts
+-0.0016151617923787498
+Done in 3.99s.
+```
+
 ## EBNF
 
 ```ebnf
